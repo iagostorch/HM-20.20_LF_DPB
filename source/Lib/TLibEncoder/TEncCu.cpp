@@ -735,12 +735,17 @@ Void TEncCu::xCompressCU( TComDataCU*& rpcBestCU, TComDataCU*& rpcTempCU, const 
         // do normal intra modes
         // speedup for inter frames
 #if MCTS_ENC_CHECK
-        if ( m_pcEncCfg->getTMCTSSEITileConstraint() || (rpcBestCU->getSlice()->getSliceType() == I_SLICE) ||
+        if ( 
+             rpcBestCU->getPic()->getPOC() == 0 && // iagostorch force the encoder to use intra only on first frame
+            (    
+             m_pcEncCfg->getTMCTSSEITileConstraint() || (rpcBestCU->getSlice()->getSliceType() == I_SLICE) ||
              ((!m_pcEncCfg->getDisableIntraPUsInInterSlices()) && (
              (rpcBestCU->getCbf(0, COMPONENT_Y) != 0) ||
              ((rpcBestCU->getCbf(0, COMPONENT_Cb) != 0) && (numberValidComponents > COMPONENT_Cb)) ||
              ((rpcBestCU->getCbf(0, COMPONENT_Cr) != 0) && (numberValidComponents > COMPONENT_Cr))  // avoid very complex intra if it is unlikely
-            )))
+            ))
+             )   
+            )
         {
 #else
         if((rpcBestCU->getSlice()->getSliceType() == I_SLICE)                                        ||
