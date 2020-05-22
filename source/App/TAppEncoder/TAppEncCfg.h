@@ -72,6 +72,7 @@ public:
 protected:
   // file I/O
   std::string m_inputFileName;                                ///< source file name
+  std::string synthLF_m_inputFileName;                        ///< Synthetized LF file name. This LF is subtracted from input file (original LF) during encoding to calculate synthesis error
   std::string m_bitstreamFileName;                            ///< output bitstream file
   std::string m_reconFileName;                                ///< output reconstruction file
 

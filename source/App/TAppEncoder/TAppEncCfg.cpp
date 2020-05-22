@@ -778,6 +778,7 @@ Bool TAppEncCfg::parseCfg( Int argc, TChar* argv[] )
 
   // File, I/O and source parameters
   ("InputFile,i",                                     m_inputFileName,                             string(""), "Original YUV input file name")
+  ("SynthetizedLF,-slf",                              synthLF_m_inputFileName,                     string(""), "Synthetized LF input file name")
   ("InputPathPrefix,-ipp",                            inputPathPrefix,                             string(""), "pathname to prepend to input filename")
   ("BitstreamFile,b",                                 m_bitstreamFileName,                         string(""), "Bitstream output file name")
   ("ReconFile,o",                                     m_reconFileName,                             string(""), "Reconstructed YUV output file name")
@@ -1360,6 +1361,8 @@ Bool TAppEncCfg::parseCfg( Int argc, TChar* argv[] )
   }
   m_inputFileName   = inputPathPrefix + m_inputFileName;
 
+  synthLF_m_inputFileName   = inputPathPrefix + synthLF_m_inputFileName;
+  
   m_framesToBeEncoded = ( m_framesToBeEncoded + m_temporalSubsampleRatio - 1 ) / m_temporalSubsampleRatio;
   m_adIntraLambdaModifier = cfg_adIntraLambdaModifier.values;
   if(m_isField)
@@ -3082,6 +3085,7 @@ Void TAppEncCfg::xPrintParameter()
 {
   printf("\n");
   printf("Input          File                    : %s\n", m_inputFileName.c_str()          );
+  printf("Synthetized    LF                      : %s\n", synthLF_m_inputFileName.c_str()          );
   printf("Bitstream      File                    : %s\n", m_bitstreamFileName.c_str()      );
   printf("Reconstruction File                    : %s\n", m_reconFileName.c_str()          );
   printf("Real     Format                        : %dx%d %gHz\n", m_iSourceWidth - m_confWinLeft - m_confWinRight, m_iSourceHeight - m_confWinTop - m_confWinBottom, (Double)m_iFrameRate/m_temporalSubsampleRatio );
