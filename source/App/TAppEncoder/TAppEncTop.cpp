@@ -53,6 +53,9 @@
 
 using namespace std;
 
+aux *export_AppEncTop;
+int frame_counter = 0;
+
 //! \ingroup TAppEncoder
 //! \{
 
@@ -679,6 +682,10 @@ Void TAppEncTop::encode()
       m_cTEncTop.setFramesToBeEncoded(m_iFrameRcvd);
     }
 
+    // iagostorch Following lines export current input and synthLF frames
+//    export_AppEncTop->export_frame("input_" + to_string(frame_counter), pcPicYuvOrg);
+//    export_AppEncTop->export_frame("synth_" + to_string(frame_counter), synthLF_pcPicYuvOrg);
+    
     // call encoding function for one frame
     if ( m_isField )
     {
@@ -704,6 +711,9 @@ Void TAppEncTop::encode()
       synthLFFile.skipFrames(m_temporalSubsampleRatio-1, m_inputFileWidth, m_inputFileHeight, m_InputChromaFormatIDC);
       
     }
+    
+    frame_counter++;
+    
   }
 
   m_cTEncTop.printSummary(m_isField);

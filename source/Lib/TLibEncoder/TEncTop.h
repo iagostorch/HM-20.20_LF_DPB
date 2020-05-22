@@ -57,6 +57,9 @@
 #include "TEncSampleAdaptiveOffset.h"
 #include "TEncPreanalyzer.h"
 #include "TEncRateCtrl.h"
+
+#include "aux.h"
+
 //! \ingroup TLibEncoder
 //! \{
 
