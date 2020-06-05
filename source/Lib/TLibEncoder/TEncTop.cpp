@@ -43,6 +43,9 @@
 #include "TLibCommon/ContextModel.h"
 #endif
 
+extern int frame_counter;
+aux *export_EncTop;
+
 //! \ingroup TLibEncoder
 //! \{
 
@@ -362,9 +365,71 @@ Void TEncTop::encode( Bool flush, TComPicYuv* synthLF_pcPicYuvOrg, TComPicYuv* s
     m_cRateCtrl.initRCGOP( m_iNumPicRcvd );
   }
 
+   
+  TComList<TComPic*>::iterator  iterPic = m_cListPic.begin();
+  TComPic*                      pcPic = *(iterPic);
+ 
+// Overwrite all reference pictures with samples of current synth LF
+  while ( iterPic != m_cListPic.end() )
+  {
+      /* if we are not in the current frame it must be a reference frame
+       * and we will overwrite its reconstructed samples with original samples 
+       * from synth LF */
+      if(pcPic->getPOC() != frame_counter){ 
+          synthLF_pcPicYuvOrg->copyToPic(pcPic->getPicYuvRec());
+      }
+      
+      iterPic++;
+      pcPic = *(iterPic);
+   }
+  
+  // Following code is used to export original and reconstructed samples of current LF
+  /*
+  iterPic = m_cListPic.begin();
+  pcPic = *(iterPic);
+  // Export original current frame and reconstructed frame for all references in ref list
+  int while_f=0;
+  while ( iterPic != m_cListPic.end() )
+  {
+      string name = "Frame" + to_string(frame_counter) + "_List" + to_string(while_f);
+      
+      if(pcPic->getPicYuvOrg())
+         export_EncTop->export_frame(name + "_org" ,pcPic->getPicYuvOrg());
+      if(pcPic->getPicYuvRec())
+         export_EncTop->export_frame(name + "_rec" ,pcPic->getPicYuvRec());
+
+      
+      iterPic++;
+      pcPic = *(iterPic);
+      while_f++;
+  }  
+  */
+  
   // compress GOP
   m_cGOPEncoder.compressGOP(m_iPOCLast, m_iNumPicRcvd, m_cListPic, rcListPicYuvRecOut, accessUnitsOut, false, false, ipCSC, snrCSC, getOutputLogControl());
 
+  // Following code is used to export original and reconstructed samples of current LF
+  /*
+  iterPic = m_cListPic.begin();
+  pcPic = *(iterPic);
+  // Export predicted and reconstructed for current frame
+  while_f=0;
+  while ( iterPic != m_cListPic.end() )
+  {
+      string name = "Frame" + to_string(frame_counter) + "_List" + to_string(while_f);
+      // If it is the current frame, we want to export predicted and reconstructed samples
+      if(pcPic->getPOC() == frame_counter){ 
+          if(pcPic->getPicYuvPred())
+            export_EncTop->export_frame(name + "_curr_pred", pcPic->getPicYuvPred());
+          if(pcPic->getPicYuvRec())
+            export_EncTop->export_frame(name + "_curr_rec", pcPic->getPicYuvRec());
+      }
+
+      iterPic++;
+      pcPic = *(iterPic);
+      while_f++;
+  }  
+  */
   if ( m_RCEnableRateControl )
   {
     m_cRateCtrl.destroyRCGOP();
